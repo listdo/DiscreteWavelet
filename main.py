@@ -34,17 +34,22 @@ def single_resolution(add_noise = False):
     LL, (LH, HL, HH) = coeffs2
     fig = plt.figure(figsize=(12, 3))
 
-    for i, a in enumerate([LL, LH, HL, HH]):
+    coeffArray = [LL, LH, HL, HH]
+
+    for i in range(0, len(coeffArray)):
+
+        a = coeffArray[i]
 
         # if add_noise add a simple gaussian noise with a sigma of 5
         if add_noise:
             row, col = a.shape
             mean = 1
-            sigma = 5
+            sigma = 25
             gauss = np.random.normal(mean, sigma, (row, col))
             gauss = gauss.reshape(row, col)
             noisy = a + gauss
             a = noisy
+            coeffArray[i] = a
 
         # outputs
         ax = fig.add_subplot(1, 4, i + 1)
@@ -60,6 +65,15 @@ def single_resolution(add_noise = False):
     fig.tight_layout()
 
     # plotting
+    plt.show()
+
+    myTupel = coeffArray[0], (coeffArray[1], coeffArray[2], coeffArray[3])
+
+    result = pywt.idwt2(myTupel, 'haar')
+
+    fig, ax = plt.subplots()
+    ax.set_title("Result")
+    ax.imshow(result, interpolation="nearest", cmap=plt.cm.gray)
     plt.show()
 
 
